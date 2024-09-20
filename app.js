@@ -248,30 +248,9 @@ async function sendEmail(destinatario, conteudo) {
     await transporter.sendMail(mailOptions);
 }
 
-// Rota para buscar o perfil do usuário autenticado
-app.get("/user/profile", checkToken, async (req, res) => {
-    try {
-        // Usando req.userId diretamente
-        const user = await User.findById(req.userId, "-password -twofaCode -twofaExpires");
-
-        if (!user) {
-            return res.status(404).json({ msg: "Usuário não encontrado!" });
-        }
-
-        res.status(200).json({ 
-            name: user.name,
-            email: user.email,
-            birthdate: user.birthdate,
-            gender: user.gender
-        });
-    } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", error);
-        res.status(500).json({ msg: "Erro ao buscar os dados do usuário." });
-    }
-});
 
 // Rota para editar o perfil do usuário autenticado
-app.put("/user/profile", checkToken, async (req, res) => {
+app.put("/user", checkToken, async (req, res) => {
     const { name, email, birthdate, gender } = req.body;
 
     // Validando os campos obrigatórios
@@ -285,19 +264,15 @@ app.put("/user/profile", checkToken, async (req, res) => {
 
     try {
         // Usando req.userId diretamente
-        const user = await User.findById(req.userId);
+        const updateUser = await User.findByIdAndUpdate(
+            req.userId,
+            { name, email, birthdate, gender },
+            { new: true, runValidators: true }
+        );
 
-        if (!user) {
+        if (!updateUser) {
             return res.status(404).json({ msg: "Usuário não encontrado!" });
         }
-
-        // Atualizando os dados do usuário
-        user.name = name;
-        user.email = email;
-        user.birthdate = birthdate;
-        user.gender = gender;
-
-        await user.save();
 
         res.status(200).json({ msg: "Perfil atualizado com sucesso!" });
     } catch (error) {
@@ -305,7 +280,6 @@ app.put("/user/profile", checkToken, async (req, res) => {
         res.status(500).json({ msg: "Erro ao atualizar o perfil do usuário." });
     }
 });
-
 
 
 const dbUser = process.env.DB_USER;
