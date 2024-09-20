@@ -5,12 +5,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const nodemailer = require("nodemailer");
+const cors = require("cors"); // Importando cors
 
 const app = express();
 const User = require("./models/User");
 
 // Config JSON response
 app.use(express.json());
+app.use(cors({
+    origin: "http://localhost:5173", // Permite apenas essa origem
+    allowedHeaders: "*", // Permite todos os headers
+}));
 
 // Open Route
 app.get("/", (req, res) => {
