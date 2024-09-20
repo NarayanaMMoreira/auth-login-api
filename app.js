@@ -240,6 +240,60 @@ async function sendEmail(destinatario, conteudo) {
     await transporter.sendMail(mailOptions);
 }
 
+app.get("/user/profile", checkToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId, "-password -twofaCode -twofaExpires");
+
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" });
+        }
+
+        res.status(200).json({ 
+            name: user.name,
+            email: user.email,
+            birthdate: user.birthdate,
+            gender: user.gender
+        });
+    } catch (error) {
+        res.status(500).json({ msg: "Erro ao buscar os dados do usuário." });
+    }
+});
+
+// Rota para editar o perfil do usuário autenticado
+app.put("/user/profile", checkToken, async (req, res) => {
+    const { name, email, birthdate, gender } = req.body;
+
+    // Validando os campos obrigatórios
+    if (!name || !email || !birthdate || !gender) {
+        return res.status(422).json({ msg: "Todos os campos são obrigatórios!" });
+    }
+
+    if (!validator.isEmail(email)) {
+        return res.status(422).json({ msg: "O e-mail é inválido!" });
+    }
+
+    try {
+        const user = await User.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" });
+        }
+
+        // Atualizando os dados do usuário
+        user.name = name;
+        user.email = email;
+        user.birthdate = birthdate;
+        user.gender = gender;
+
+        await user.save();
+
+        res.status(200).json({ msg: "Perfil atualizado com sucesso!" });
+    } catch (error) {
+        res.status(500).json({ msg: "Erro ao atualizar o perfil do usuário." });
+    }
+});
+
+
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 
