@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 const cors = require("cors"); // Já incluído aqui
 
 const app = express();
-const User = require("./models/User");
+const User = require("./Models/user");
 
 // Config JSON response
 app.use(express.json());
