@@ -136,6 +136,38 @@ app.post("/auth/login", async (req, res) => {
     res.status(200).json({ msg: "Autenticação realizada com sucesso! Verifique seu e-mail para o código de 2FA.", token });
 });
 
+// Rota para verificar o código de 2FA
+app.post("/auth/verify-2fa", async (req, res) => {
+    const { token, twofaCode } = req.body;
+
+    if (!token || !twofaCode) {
+        return res.status(422).json({ msg: "Token e código de 2FA são obrigatórios!" });
+    }
+
+    try {
+        const secret = process.env.SECRET;
+        const decoded = jwt.verify(token, secret); // Verificando o token JWT
+        const user = await User.findById(decoded.id); // Buscando o usuário pelo ID decodificado
+
+        // Verifica se o usuário existe
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" });
+        }
+
+        // Verifica se o código de 2FA é válido e se não está expirado
+        if (user.twofaCode !== twofaCode || Date.now() > user.twofaExpires) {
+            return res.status(422).json({ msg: "Código de 2FA inválido ou expirado!" });
+        }
+
+        // Limpar o código de 2FA após a verificação
+        await User.updateOne({ _id: user._id }, { twofaCode: null, twofaExpires: null });
+
+        res.status(200).json({ msg: "2FA verificado com sucesso!" });
+    } catch (err) {
+        res.status(400).json({ msg: "Token inválido!" });
+    }
+});
+
 // Rota de redefinição de senha
 app.post("/auth/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -178,33 +210,6 @@ app.post("/auth/reset-password", async (req, res) => {
     }
 });
 
-// Rota para verificar o código de 2FA
-app.post("/auth/verify-2fa", async (req, res) => {
-    const { token, twofaCode } = req.body;
-
-    if (!token || !twofaCode) {
-        return res.status(422).json({ msg: "Token e código de 2FA são obrigatórios!" });
-    }
-
-    try {
-        const secret = process.env.SECRET;
-        const decoded = jwt.verify(token, secret);
-        const user = await User.findById(decoded.id);
-
-        // Verifica se o código de 2FA é válido e se não está expirado
-        if (user.twofaCode !== twofaCode || Date.now() > user.twofaExpires) {
-            return res.status(422).json({ msg: "Código de 2FA inválido ou expirado!" });
-        }
-
-        // Limpar o código de 2FA após a verificação
-        await User.updateOne({ _id: user._id }, { twofaCode: null, twofaExpires: null });
-
-        res.status(200).json({ msg: "2FA verificado com sucesso!" });
-    } catch (err) {
-        res.status(400).json({ msg: "Token inválido!" });
-    }
-});
-
 // Função para enviar e-mail
 async function sendEmail(destinatario, conteudo) {
     const transporter = nodemailer.createTransport({
@@ -229,13 +234,10 @@ const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 
 mongoose
-    .connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.3bwb3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+    .connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.3bwb3.mongodb.net/?retryWrites=true&w=majority`)
     .then(() => {
-        console.log("Conectou ao banco!");
-        const PORT = process.env.PORT || 3000; // Use a variável de ambiente PORT
-        app.listen(PORT, () => {
-            console.log(`Servidor rodando na porta ${PORT}`);
+        app.listen(3000, () => {
+            console.log("Servidor rodando na porta 3000");
         });
     })
     .catch((err) => console.log(err));
-
