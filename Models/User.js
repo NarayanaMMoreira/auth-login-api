@@ -7,6 +7,7 @@ const User = mongoose.model("User", {
   birthdate: { type: Date, required: true },
   gender: { type: String, enum: ["masculino", "feminino", "prefiro não identificar"], required: true },
   password: { type: String, required: true },
+  twofaExpires: { type: String, default: null }
 });
 
 module.exports = User;
