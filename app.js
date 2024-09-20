@@ -167,6 +167,7 @@ mongoose
   .connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.3bwb3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
   .then(() => {
     console.log("Conectou ao banco!");
-    app.listen(3000);
   })
   .catch((err) => console.log(err));
+
+  module.exports = app;
