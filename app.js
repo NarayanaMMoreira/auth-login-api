@@ -230,3 +230,8 @@ mongoose
         app.listen(3000);
     })
     .catch((err) => console.log(err));
+
+
+    const cors = require('cors');
+    app.use(cors());
+
