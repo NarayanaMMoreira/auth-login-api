@@ -243,8 +243,10 @@ async function sendEmail(destinatario, conteudo) {
     await transporter.sendMail(mailOptions);
 }
 
+// Rota para buscar o perfil do usuário autenticado
 app.get("/user/profile", checkToken, async (req, res) => {
     try {
+        // Usando req.userId diretamente
         const user = await User.findById(req.userId, "-password -twofaCode -twofaExpires");
 
         if (!user) {
@@ -258,6 +260,7 @@ app.get("/user/profile", checkToken, async (req, res) => {
             gender: user.gender
         });
     } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
         res.status(500).json({ msg: "Erro ao buscar os dados do usuário." });
     }
 });
@@ -276,6 +279,7 @@ app.put("/user/profile", checkToken, async (req, res) => {
     }
 
     try {
+        // Usando req.userId diretamente
         const user = await User.findById(req.userId);
 
         if (!user) {
@@ -292,9 +296,11 @@ app.put("/user/profile", checkToken, async (req, res) => {
 
         res.status(200).json({ msg: "Perfil atualizado com sucesso!" });
     } catch (error) {
+        console.error("Erro ao atualizar perfil do usuário:", error);
         res.status(500).json({ msg: "Erro ao atualizar o perfil do usuário." });
     }
 });
+
 
 
 const dbUser = process.env.DB_USER;
