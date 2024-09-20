@@ -13,9 +13,8 @@ const User = require("./Models/User");
 // Config JSON response
 app.use(express.json());
 app.use(cors({
-    origin: "https://pixelnest.vercel.app/login", 
-    origin: "https://pixelnest.vercel.app/",
-    allowedHeaders: "*", 
+    origin: ["https://pixelnest.vercel.app/login", "https://pixelnest.vercel.app"],
+    allowedHeaders: "*",
 }));
 
 // Open Route
