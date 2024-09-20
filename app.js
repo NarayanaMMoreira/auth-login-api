@@ -233,6 +233,10 @@ mongoose
     .connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.3bwb3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
     .then(() => {
         console.log("Conectou ao banco!");
-        app.listen(3000);
+        const PORT = process.env.PORT || 3000; // Use a variável de ambiente PORT
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`);
+        });
     })
     .catch((err) => console.log(err));
+
