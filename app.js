@@ -13,7 +13,10 @@ const User = require("./Models/User");
 // Config JSON response
 app.use(express.json());
 app.use(cors({
-    origin: ["https://pixel-nest.vercel.app/login", "https://pixel-nest.vercel.app", "https://pixel-nest.vercel.app/user/profile"],
+    origin: [
+        "https://pixel-nest.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: "*",
 }));
 
