@@ -104,6 +104,7 @@ app.post("/auth/register", async (req, res) => {
 });
 
 // Rota de login
+// Rota de login
 app.post("/auth/login", async (req, res) => {
     const { emailOrUsername, password } = req.body;
 
@@ -127,14 +128,13 @@ app.post("/auth/login", async (req, res) => {
 
     // Gera e armazena o código de 2FA e a data de expiração
     const twofaCode = Math.floor(100000 + Math.random() * 900000).toString(); // Código de 6 dígitos
-    const expirationTime = Date.now() + 10 * 60 * 1000; // 2 minutos em milissegundos
+    const expirationTime = Date.now() + 10 * 60 * 1000; // 10 minutos em milissegundos
     try {
         await User.updateOne({ _id: user._id }, { twofaCode, twofaExpires: expirationTime });
     } catch (err) {
         console.error('Erro ao atualizar o usuário:', err);
-        // Lidar com o erro (retornar uma resposta, lançar um erro, etc.)
+        return res.status(500).json({ msg: "Erro ao gerar código de 2FA." });
     }
-    
 
     // Enviar e-mail com o código
     await sendEmail(user.email, `Seu código de 2FA é: ${twofaCode}`);
@@ -142,7 +142,7 @@ app.post("/auth/login", async (req, res) => {
     res.status(200).json({ msg: "Autenticação realizada com sucesso! Verifique seu e-mail para o código de 2FA.", token });
 });
 
-// Rota para verificar o código de 2FA
+
 app.post("/auth/verify-2fa", async (req, res) => {
     const { token, twofaCode } = req.body;
 
@@ -161,7 +161,10 @@ app.post("/auth/verify-2fa", async (req, res) => {
         }
 
         // Verifica se o código de 2FA é válido e se não está expirado
-        if (user.twofaCode !== twofaCode || Date.now() > user.twofaExpires) {
+        const isTwofaCodeValid = user.twofaCode === twofaCode;
+        const isTwofaExpired = Date.now() > user.twofaExpires;
+
+        if (!isTwofaCodeValid || isTwofaExpired) {
             return res.status(422).json({ msg: "Código de 2FA inválido ou expirado!" });
         }
 
@@ -173,6 +176,7 @@ app.post("/auth/verify-2fa", async (req, res) => {
         res.status(400).json({ msg: "Token inválido!" });
     }
 });
+
 
 // Rota de redefinição de senha
 app.post("/auth/forgot-password", async (req, res) => {
