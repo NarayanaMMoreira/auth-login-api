@@ -128,7 +128,13 @@ app.post("/auth/login", async (req, res) => {
     // Gera e armazena o código de 2FA e a data de expiração
     const twofaCode = Math.floor(100000 + Math.random() * 900000).toString(); // Código de 6 dígitos
     const expirationTime = Date.now() + 10 * 60 * 1000; // 2 minutos em milissegundos
-    await User.updateOne({ _id: user._id }, { twofaCode, twofaExpires: expirationTime }); // Armazena o código e a expiração no banco de dados
+    try {
+        await User.updateOne({ _id: user._id }, { twofaCode, twofaExpires: expirationTime });
+    } catch (err) {
+        console.error('Erro ao atualizar o usuário:', err);
+        // Lidar com o erro (retornar uma resposta, lançar um erro, etc.)
+    }
+    
 
     // Enviar e-mail com o código
     await sendEmail(user.email, `Seu código de 2FA é: ${twofaCode}`);
