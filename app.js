@@ -14,10 +14,13 @@ const User = require("./Models/User");
 app.use(express.json());
 app.use(cors({
     origin: [
-        "https://pixel-nest.vercel.app",  // Apenas o domínio é necessário
+        "https://pixel-nest.vercel.app", 
+        "pixelnest-q7k2ft788-narayana-moreiras-projects.vercel.app",
+        "https://pixelnest-git-main-narayana-moreiras-projects.vercel.app/",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Authorization", "Content-Type"], // Permita os cabeçalhos necessários explicitamente
+    allowedHeaders: ["Authorization", "Content-Type"], 
+    credentials: true
 }));
 
 
