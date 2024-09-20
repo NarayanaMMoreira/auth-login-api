@@ -232,6 +232,21 @@ mongoose
     .catch((err) => console.log(err));
 
 
+    const express = require('express');
     const cors = require('cors');
-    app.use(cors());
+
+    const app = express();
+
+// Habilitar CORS
+app.use(cors({
+  origin: 'http://localhost:5173', // Permite somente o frontend que roda no localhost:5173
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+
+// Suas rotas aqui
+app.post('/auth/login', (req, res) => {
+  // Sua lógica de login
+});
+
 
