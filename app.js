@@ -15,11 +15,11 @@ app.use(express.json());
 app.use(cors({
     origin: [
         "https://pixel-nest.vercel.app",
-        "https://pixel-nest.vercel.app/user/profile"
-        "https://pixel-nest.vercel.app/login"
-        "https://pixel-nest.vercel.app/cadastrar"
-        "https://pixel-nest.vercel.app/2fa"
-        "https://pixel-nest.vercel.app/register"
+        "https://pixel-nest.vercel.app/user/profile",
+        "https://pixel-nest.vercel.app/login",
+        "https://pixel-nest.vercel.app/cadastrar",
+        "https://pixel-nest.vercel.app/2fa",
+        "https://pixel-nest.vercel.app/register",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: "*",
