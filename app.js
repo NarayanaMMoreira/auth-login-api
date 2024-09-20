@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const nodemailer = require("nodemailer");
-const cors = require("cors"); // Já incluído aqui
+const cors = require("cors");
 
 const app = express();
 const User = require("./Models/user");
@@ -170,4 +170,5 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-  module.exports = app;
+// Exportar a aplicação para o Vercel
+module.exports = app;
