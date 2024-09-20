@@ -8,13 +8,14 @@ const nodemailer = require("nodemailer");
 const cors = require("cors"); // Importando cors
 
 const app = express();
-const User = require("./models/User");
+const User = require("./Models/User");
 
 // Config JSON response
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173", // Permite apenas essa origem
-    allowedHeaders: "*", // Permite todos os headers
+    origin: "https://pixelnest.vercel.app/login", 
+    origin: "https://pixelnest.vercel.app/",
+    allowedHeaders: "*", 
 }));
 
 // Open Route
